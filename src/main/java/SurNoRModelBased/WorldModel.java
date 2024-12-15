@@ -9,6 +9,7 @@ public class WorldModel {
 	//Below contains the surprise value
 	double BayesFactorSurprise; //surprise taken to be Bayesian factor here, should eventually be changed to CCS
 	double[] CCSs = new double[3];
+	double[] allPc = new double[3];
 
 	/*
 	* Contains transition probabilities
@@ -28,7 +29,10 @@ public class WorldModel {
 	
 	double[] adaptation_rates;
 	// Go from 1 to 8, NFR in the order MC, MR, MP
-	int NFR[][] = {{1,1,1},{1,1,0},{1,0,1},{1,0,0},{0,1,1},{0,1,0},{0,0,1},{0,0,0}};
+	//int NFR[][] = {{1,1,1},{1,1,0},{1,0,1},{1,0,0},{0,1,1},{0,1,0},{0,0,1},{0,0,0}};
+	
+	// Go from 1 to 8, NFR in the order MC, MR, MP
+	int NFR[][] = {{1,1,1},{1,0,1},{1,1,0},{1,0,0},{0,1,1},{0,0,1},{0,1,0},{0,0,0}};
 	
 	double curiousity[] = {1,1,1,1,1,1,1,1};
 	
@@ -73,14 +77,39 @@ public class WorldModel {
 						System.out.print(alpha[i][a][j]+" ");
 									
 					}
-					//alpha[i][a][0] = (double) 9;
-					//alpha[i][a][1] = (double) 1;
-
 					System.out.println();
 					//double[] temp = {1,20,1,20,1,20,1,20};
 					//alpha_t1[i][a] = temp;
 		  }
 		}
+		
+		/*
+		alpha[0][0][0]=(double) 9;
+		alpha[3][0][0]=(double) 8.5;
+		alpha[1][0][0]=(double) 9;
+		alpha[4][0][0]=(double) 8.5;
+		alpha[2][0][0]=(double) 9.1;
+		alpha[5][0][0]=(double) 8.9;
+		alpha[0][0][1]=(double) 10-alpha[0][0][0];;
+		alpha[3][0][1]=(double) 10-alpha[3][0][0];;
+		alpha[1][0][1]=(double) 10-alpha[1][0][0];;
+		alpha[4][0][1]=(double) 10-alpha[4][0][0];;
+		alpha[2][0][1]=(double) 10-alpha[2][0][0];;
+		alpha[5][0][1]=(double) 10-alpha[5][0][0];;
+		
+		alpha[0][1][0]=(double) 8.6;
+		alpha[3][1][0]=(double) 7.3;
+		alpha[1][1][0]=(double) 8.2;
+		alpha[4][1][0]=(double) 7.5;
+		alpha[2][1][0]=(double) 9.5;
+		alpha[5][1][0]=(double) 9.3;
+		alpha[0][1][1]=(double) 10-alpha[0][1][0];
+		alpha[3][1][1]=(double) 10-alpha[3][1][0];
+		alpha[1][1][1]=(double) 10-alpha[1][1][0];
+		alpha[4][1][1]=(double) 10-alpha[4][1][0];
+		alpha[2][1][1]=(double) 10-alpha[2][1][0];
+		alpha[5][1][1]=(double) 10-alpha[5][1][0];
+		*/
 		
 		//computing initial transitions
 		//System.out.println("initializing transition probabilities");
@@ -127,17 +156,12 @@ public class WorldModel {
 
 		//BayesFactorSurprise=trans_t1[cstate][action][sprime]/trans[cstate][action][sprime];
 		//CCS = BayesFactorSurprise;
-		
 		for (int i=0;i<number_of_nfr;i++) {
 			int cnfr = i + 3*(1-NFR[cstate][i]);
-			int nnfr = (1-NFR[sprime][i]);
-			CCSs[i] = klDivergence(alpha_probs[cnfr][action], alpha_t12[cnfr][action]);//alpha_probs[cnfr][action][nnfr]/alpha_t12[cnfr][action][nnfr]; //klDivergence(alpha_probs[cnfr][action], alpha_t12[cnfr][action]);
+			int nnfr = 1-NFR[sprime][i];
+			CCSs[i] = alpha_probs[cnfr][action][nnfr]/alpha_t12[cnfr][action][nnfr];//klDivergence(alpha_probs[cnfr][action], alpha_t12[cnfr][action]);
+			CCSs[i] = 1/CCSs[i];
 		}
-		/*
-		for (int i=0;i<number_of_nfr;i++) {
-			CCSs[i] = klDivergence(trans[cstate][action], trans_t1[cstate][action]);
-		}
-		*/
 		//CCS = 1-CCS;
 		//System.out.println(trans_t1[cstate][action][sprime]+"  "+trans[cstate][action][sprime]);
 		//System.out.println("Surprise: "+CCS);
@@ -153,6 +177,7 @@ public class WorldModel {
 		//m=0.5;
 		for (int i = 0; i < number_of_nfr; i++) {
 			double pc = pcs[i]/13;//pcs[i]/100;
+			allPc[i] = pc;
 			double m=pc/(1-pc);
 			adaptation_rates[i]= (m*CCSs[i])/(1+(m*CCSs[i]));
 		}
@@ -164,7 +189,6 @@ public class WorldModel {
 	public void updateBelief(int cstate,int selected_action,int sprime)
 	{
 		double kroneckers_delta; //This will hold either 0 or 1 based on if the next state is the same as the current state or not
-		System.out.println("HERE!!!!: " + cstate + " " + sprime);
 		System.out.println("update belief");
 		
 		/*
@@ -176,20 +200,21 @@ public class WorldModel {
 		
 		for(int sat_NFR=0;sat_NFR<number_of_nfr;sat_NFR++)
 		{
-			//We would invert delta to try and flag when issues occurs, where may want transition probs for worse states to be higher so more appropriate actions can be taken
-				int cnfr = sat_NFR + 3*(1-current_sats[sat_NFR]);
-				if((next_sats[sat_NFR]==1))
-				{
-					kroneckers_delta=(double) 1.0;
-				}
-				else {
-					
-					kroneckers_delta = (double) 0;
-				}
-	
-				alpha[cnfr][selected_action][0]=((1-adaptation_rates[sat_NFR])*alpha[cnfr][selected_action][0])+(adaptation_rates[sat_NFR]*alpha_t1[cnfr][selected_action][0])+kroneckers_delta;
-				alpha[cnfr][selected_action][1]=((1-adaptation_rates[sat_NFR])*alpha[cnfr][selected_action][1])+(adaptation_rates[sat_NFR]*alpha_t1[cnfr][selected_action][1])+1-kroneckers_delta;
+			int cnfr = sat_NFR + 3*(1-current_sats[sat_NFR]);
+			if(next_sats[sat_NFR]==1)
+			{
+				kroneckers_delta=(double) 1.0;
+			}
+			else {
+				
+				kroneckers_delta = (double) 0;
+			}
+
+			alpha[cnfr][selected_action][0]=((1-adaptation_rates[sat_NFR])*alpha[cnfr][selected_action][0])+(adaptation_rates[sat_NFR]*alpha_t1[cnfr][selected_action][0])+kroneckers_delta;
+			alpha[cnfr][selected_action][1]=((1-adaptation_rates[sat_NFR])*alpha[cnfr][selected_action][1])+(adaptation_rates[sat_NFR]*alpha_t1[cnfr][selected_action][1])+1-kroneckers_delta;
+			
 		}
+		
 	}
 	
 	//Equation 3 (I think) from Novelty is not surprise
@@ -230,7 +255,7 @@ public class WorldModel {
 					denominator1=denominator1+trans[cstate][action][sprime];
 				}
 				
-				/*
+				
 				double rn_sum = 0;
 				for(int sprime=0;sprime<number_of_states;sprime++)
 				{
@@ -244,7 +269,7 @@ public class WorldModel {
 				if (rn_sum != 1) {
 					trans[cstate][action][0] = trans[cstate][action][0] + (1-rn_sum);
 				}
-				*/
+				
 				//System.out.println();
 			}
 			//System.out.println();
@@ -314,6 +339,11 @@ public class WorldModel {
 	public double[] getSurprise()
 	{
 		return CCSs;
+	}
+	
+	public double[] getPc()
+	{
+		return allPc;
 	}
 	
 	public double[] getAR()

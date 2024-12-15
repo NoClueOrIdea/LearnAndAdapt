@@ -593,7 +593,7 @@ public class SolvePOMDP {
 			pw_wmBel.println(Arrays.toString(wm.getBelief(cs,0)));
 			pw_wmBel.println(Arrays.toString(wm.getBelief(cs,1)));
 			pw_pomBel.println("Timestep: " + RDMSimConnector.timestep + " State: " + csw + " Beliefs: " + Arrays.toString(b));
-			pw_surp.println("Pc: " + Arrays.toString(new_pc) + ", Surprise: " + Arrays.toString(wm.getSurprise()) + ", Adaptaton rate: " + Arrays.toString(wm.getAR()) + ", Value size: "+V1.size());
+			pw_surp.println("Pc: " + Arrays.toString(wm.getPc()) + ", Surprise: " + Arrays.toString(wm.getSurprise()) + ", Adaptaton rate: " + Arrays.toString(wm.getAR()) + ", Value size: "+V1.size());
 
 			
 			
@@ -879,9 +879,10 @@ public class SolvePOMDP {
 			//System.exit(0);
 		}
 		
-		//int[] scen = {1,2,4};
+		//int[] scen = {4,1,2};
 		//int[] scen = {0,3,5,6};
 		int[] scen = {0, 1, 2, 3, 4, 5, 6};
+		//int[] scen = {4};
 		//double pc_totest[] = {0.5, 0.25,0, 0.75, 0.9};
 		//double pc_totest[] = { 0.1, 0.5, 0.9, 0.3, 0.7};
 		//double pc_totest[] = {0, 0.2, 0.4, 0.6, 0.8};
