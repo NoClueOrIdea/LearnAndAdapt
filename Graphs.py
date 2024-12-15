@@ -19,6 +19,23 @@ def remove_strings(inp):
     
     return inp.replace("[", "").replace("]", "").replace(",", "")
 
+def sort_runs(x):
+    for i in range(len(x)-1, 0, -1):
+        if x[i][-4:] == ".txt":
+            del x[i]
+            
+    y = len(x)//10
+    for i in range(1, y+1):
+        if (i+1)*10 <= len(x):
+            bound = 10
+        else:
+            bound = len(x)+1-i*10
+        remainder = i + bound
+        temp = x[i:remainder]
+        del x[i:remainder]
+        x = x+temp
+    return x
+
 def load_data(folder):
     path = folder + '/'
     top_selection = []
@@ -36,7 +53,8 @@ def load_data(folder):
         sats2.append([])
         expected_value.append([])
         surps.append([])
-        for n in os.listdir(path2):
+        sorted_runs = sort_runs(os.listdir(path2))
+        for n in sorted_runs:
             if (n[-4:] != ".txt"):
                 sat = []
                 mon = []
@@ -354,6 +372,7 @@ def record_surprise(data):
         print(path2)
         for i, run in enumerate(s):
             ts = np.linspace(1,len(run[0]),len(run[0]))
+            plt.ylim(0,1)
             plt.plot(ts, run[0], label="MC")
             plt.plot(ts, run[1], label="MP")
             plt.plot(ts, run[2], label="MR")

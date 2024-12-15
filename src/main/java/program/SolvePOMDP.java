@@ -356,14 +356,14 @@ public class SolvePOMDP {
 	     
 	     if(currentscenario_case==0)
 	     {
-	    	 pomdp.transitionFunction=wm.getTransitionFunction();
-        	 //pomdp.transitionFunction=RDMTransitionProb.getTransitionFunction();
+	    	 //pomdp.transitionFunction=wm.getTransitionFunction();
+        	 pomdp.transitionFunction=RDMTransitionProb.getTransitionFunction();
         	 
 	     }
 	     else
 	     {
-	    	 pomdp.transitionFunction=wm.getTransitionFunction();
-	    	 //pomdp.transitionFunction=RDMTransitionProb.getTransitionFunctionCase(currentscenario_case);
+	    	 //pomdp.transitionFunction=wm.getTransitionFunction();
+	    	 pomdp.transitionFunction=RDMTransitionProb.getTransitionFunctionCase(currentscenario_case);
 	     }
 	     
 	     RDMSimConnector.p=pomdp;
@@ -401,14 +401,14 @@ public class SolvePOMDP {
 	     
 	         if(currentscenario_case==0)
 		     {
-		    	 pomdp.transitionFunction=wm.getTransitionFunction();
-	        	 //pomdp.transitionFunction=RDMTransitionProb.getTransitionFunction();
+		    	 //pomdp.transitionFunction=wm.getTransitionFunction();
+	        	 pomdp.transitionFunction=RDMTransitionProb.getTransitionFunction();
 	        	 
 		     }
 		     else
 		     {
-		    	 pomdp.transitionFunction=wm.getTransitionFunction();
-		    	 //pomdp.transitionFunction=RDMTransitionProb.getTransitionFunctionCase(currentscenario_case);
+		    	 //pomdp.transitionFunction=wm.getTransitionFunction();
+		    	 pomdp.transitionFunction=RDMTransitionProb.getTransitionFunctionCase(currentscenario_case);
 		     }
 		    
 	         RDMSimConnector.p=pomdp;
@@ -558,14 +558,14 @@ public class SolvePOMDP {
 	     
 	         if(currentscenario_case==0)
 		     {
-		    	 pomdp.transitionFunction=wm.getTransitionFunction();
-	        	 //pomdp.transitionFunction=RDMTransitionProb.getTransitionFunction();
+		    	 //pomdp.transitionFunction=wm.getTransitionFunction();
+	        	 pomdp.transitionFunction=RDMTransitionProb.getTransitionFunction();
 	        	 
 		     }
 		     else
 		     {
-		    	 pomdp.transitionFunction=wm.getTransitionFunction();
-		    	 //pomdp.transitionFunction=RDMTransitionProb.getTransitionFunctionCase(currentscenario_case);
+		    	 //pomdp.transitionFunction=wm.getTransitionFunction();
+		    	 pomdp.transitionFunction=RDMTransitionProb.getTransitionFunctionCase(currentscenario_case);
 		     }
 		    
 	         RDMSimConnector.p=pomdp;
